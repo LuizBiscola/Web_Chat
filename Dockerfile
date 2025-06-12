@@ -14,10 +14,10 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 # CORREÇÃO AQUI: Copie a pasta WebChat inteira e o .csproj dentro dela
 COPY ["WebChat/WebChat.csproj", "WebChat/"]
-RUN dotnet restore "WebChat/WebChat.csproj" # CORREÇÃO AQUI: Caminho completo
-COPY . . # Isso copiará todo o restante do repositório
-WORKDIR "/src/WebChat" # CORREÇÃO AQUI: Mude para o diretório do projeto WebChat dentro de /src
-RUN dotnet build "WebChat.csproj" -c $BUILD_CONFIGURATION -o /app/build # Agora o .csproj está no diretório atual
+RUN dotnet restore "WebChat/WebChat.csproj" 
+COPY . . 
+WORKDIR "/src/WebChat" 
+RUN dotnet build "WebChat.csproj" -c $BUILD_CONFIGURATION -o /app/build 
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
