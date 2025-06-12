@@ -12,16 +12,15 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["WebChat/WebChat.csproj", "WebChat/"]  # This line is correct as is
-RUN dotnet restore "./WebChat/WebChat.csproj"
-COPY . . # This will copy the whole repository including the WebChat folder
-WORKDIR "/src/WebChat" # Change to the WebChat project directory
-RUN dotnet build "./WebChat.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY ["WebChat.csproj", "."]
+RUN dotnet restore "WebChat.csproj"
+COPY . .
+RUN dotnet build "WebChat.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./WebChat.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "WebChat.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
 FROM base AS final
