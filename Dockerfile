@@ -12,10 +12,12 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["WebChat.csproj", "."]
-RUN dotnet restore "WebChat.csproj"
-COPY . .
-RUN dotnet build "WebChat.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# CORREÇÃO AQUI: Copie a pasta WebChat inteira e o .csproj dentro dela
+COPY ["WebChat/WebChat.csproj", "WebChat/"]
+RUN dotnet restore "WebChat/WebChat.csproj" # CORREÇÃO AQUI: Caminho completo
+COPY . . # Isso copiará todo o restante do repositório
+WORKDIR "/src/WebChat" # CORREÇÃO AQUI: Mude para o diretório do projeto WebChat dentro de /src
+RUN dotnet build "WebChat.csproj" -c $BUILD_CONFIGURATION -o /app/build # Agora o .csproj está no diretório atual
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
